@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}All Customers - Simple CRM{% endblock %}
+
+{% block content %}
+<h1>All Customers</h1>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <ul class="flashes">
+        {% for category, message in messages %}
+            <li class="{{ category }}">{{ message }}</li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+{% endwith %}
+
+{% if customers %}
+    <table>
+        <thead>
+            <tr>
+                <th>Customer Name</th>
+                <th>Primary Contact</th>
+                <th>Contact Email</th>
+                <th>Latest Event</th> <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for customer in customers %}
+            <tr>
+                <<td>{{ customer.customer_name }}</td>
+                <td>{{ customer.primary_contact_name }}</td>
+                <td>{{ customer.primary_contact_email }}</td>
+                <td>
+                    {# Find the most recent event, assuming customer.events is a list #}
+                    {% set latest_event = customer.events | sort(attribute='timestamp', reverse=true) | first %}
+                    {% if latest_event %}
+                        <strong>{{ latest_event.event_type }}:</strong> {{ latest_event.description | truncate(50, True, '...') }}
+                        <br><small>({{ latest_event.timestamp.strftime('%Y-%m-%d %H:%M') }})</small>
+                    {% else %}
+                        <em>No events logged</em>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{{ url_for('view_customer', customer_id=customer.id) }}">View/Log Event</a> |
+                    <a href="{{ url_for('delete_customer', customer_id=customer.id) }}">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>No customers found yet. <a href="{{ url_for('create_customer') }}">Create your first customer!</a></p>
+{% endif %}
+
+{% endblock %}

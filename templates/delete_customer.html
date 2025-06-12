@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Delete Customer - Simple CRM{% endblock %}
+
+{% block content %}
+<h1>Delete Customer: {{ customer.customer_name }}</h1>
+
+<p>Are you sure you want to delete the customer <strong>{{ customer.customer_name }}</strong>?</p>
+<p>This action cannot be undone and will also delete all associated event logs.</p>
+
+<form method="POST" action="{{ url_for('delete_customer', customer_id=customer.id) }}">
+    <button type="submit" class="button-danger">Confirm Delete</button>
+    <a href="{{ url_for('view_customer', customer_id=customer.id) }}" class="button-secondary">Cancel</a>
+</form>
+
+{% endblock %}
